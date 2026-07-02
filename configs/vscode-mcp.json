@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "book-tutor": {
+      "command": "python",
+      "args": ["-m", "book_tutor_agent"]
+    }
+  }
+}

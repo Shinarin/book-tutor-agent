@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "book-tutor-agent"
+version = "0.1.0"
+description = "MCP Server: PDF/EPUB → Markdown → AI 总结+教案+知识点 — 一键将任意文档转为学习材料"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [{name = "Book Tutor Agent"}]
+keywords = ["mcp", "book", "pdf", "markdown", "ai", "llm", "education"]
+
+dependencies = [
+    # MCP
+    "mcp>=1.0.0",
+
+    # markitdown 运行时依赖
+    "pdfplumber",
+    "pdfminer.six",
+    "pillow",
+    "magika",
+    "charset-normalizer",
+    "markdownify",
+    "beautifulsoup4",
+    "requests",
+
+    # markitdown-ocr 额外依赖
+    "PyMuPDF",
+
+    # book-tutor 运行时依赖
+    "claude-agent-sdk>=0.2.101",
+    "httpx",
+    "python-dotenv",
+]
+
+[project.optional-dependencies]
+ocr = ["PyMuPDF"]
+tts = ["azure-cognitiveservices-speech"]
+
+[project.scripts]
+book-tutor-mcp = "book_tutor_agent.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["book_tutor_agent*"]
+
+[tool.setuptools.package-data]
+book_tutor_agent = ["skills/book-tutor/*.md"]

@@ -1,0 +1,4 @@
+claude-agent-sdk>=0.2.101
+httpx
+python-dotenv
+azure-cognitiveservices-speech

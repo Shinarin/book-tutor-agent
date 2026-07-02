@@ -23,7 +23,7 @@
 
 在你的 Agent 工具中直接说：
 
-> "帮我安装 book-tutor-agent：pip install git+https://github.com/forestpeas/book-tutor-agent.git ，然后把 MCP 配置加到全局设置，再帮我注册 book-tutor skill"
+> "帮我安装 book-tutor-agent：pip install git+https://github.com/Shinarin/book-tutor-agent.git ，然后把 MCP 配置加到全局设置，再帮我注册 book-tutor skill"
 
 Agent 自动完成 pip 安装 + MCP 配置 + SKILL 注册。重启即可用。
 
@@ -32,7 +32,7 @@ Agent 自动完成 pip 安装 + MCP 配置 + SKILL 注册。重启即可用。
 **第 1 步 — pip 安装**
 
 ```powershell
-pip install git+https://github.com/forestpeas/book-tutor-agent.git
+pip install git+https://github.com/Shinarin/book-tutor-agent.git
 ```
 
 安装后文件位于 `site-packages/book_tutor_agent/`，由 pip 统一管理。

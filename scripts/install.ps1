@@ -12,7 +12,7 @@ Write-Host ""
 
 # 步骤 1: pip install
 Write-Host "[1/2] pip install ..." -ForegroundColor Yellow
-pip install git+https://github.com/forestpeas/book-tutor-agent.git
+pip install git+https://github.com/Shinarin/book-tutor-agent.git
 if ($LASTEXITCODE -ne 0) {
     Write-Host "❌ pip install 失败，请检查 Python 环境和网络连接" -ForegroundColor Red
     exit 1

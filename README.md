@@ -23,7 +23,9 @@
 
 在你的 Agent 工具中直接说：
 
-> "帮我安装 book-tutor-agent：pip install git+https://github.com/Shinarin/book-tutor-agent.git ，然后把 MCP 配置加到全局设置，再帮我注册 book-tutor skill"
+```
+帮我安装 book-tutor-agent：pip install git+https://github.com/Shinarin/book-tutor-agent.git ，然后把 MCP 配置加到全局设置，再帮我注册 book-tutor skill
+```
 
 Agent 自动完成 pip 安装 + MCP 配置 + SKILL 注册。重启即可用。
 

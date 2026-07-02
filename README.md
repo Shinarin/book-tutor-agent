@@ -64,6 +64,21 @@ pip install git+https://github.com/Shinarin/book-tutor-agent.git
 
 > GitHub `configs/` 目录下有各工具的完整配置模板，可直接复制使用。
 
+> **关于 API Key**：MCP Server 作为独立进程运行，通常自动继承宿主环境变量中已配置的 `ANTHROPIC_API_KEY`。如果工具提示缺少 API Key，在 MCP 配置中添加 `env` 字段：
+> ```json
+> {
+>   "book-tutor": {
+>     "command": "python",
+>     "args": ["-m", "book_tutor_agent"],
+>     "env": {
+>       "ANTHROPIC_API_KEY": "sk-xxx",
+>       "ANTHROPIC_BASE_URL": "http://your-proxy:8080/v1"
+>     }
+>   }
+> }
+> ```
+> 无需 API 的查询工具（get_book_progress、read_chapter_content、install_skill）始终可用。
+
 **第 3 步 — 注册 SKILL**
 
 重启 Agent 工具后，在对话中说：

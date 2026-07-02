@@ -21,12 +21,33 @@ mcp = FastMCP("book-tutor")
 # ---------------------------------------------------------------------------
 
 def _ensure_api():
-    """多名称兜底，确保 API 环境变量已设置。"""
+    """确保 API 环境变量已设置。MCP 子进程自动继承宿主环境变量，通常无需手动配置。
+    仅当 Agent 工具没有自动传递 API 时需在 MCP 配置的 env 字段中设置。"""
     api_key = (os.environ.get("ANTHROPIC_API_KEY")
-               or os.environ.get("ANTHROPIC_AUTH_TOKEN"))
+               or os.environ.get("ANTHROPIC_AUTH_TOKEN")
+               or os.environ.get("OPENAI_API_KEY"))  # Codex 模式也兼容
     if api_key:
         os.environ.setdefault("ANTHROPIC_API_KEY", api_key)
         os.environ.setdefault("ANTHROPIC_AUTH_TOKEN", api_key)
+        return True
+
+    return False
+
+
+def _require_api():
+    """要求 API，未配置时返回友好提示。"""
+    if not _ensure_api():
+        return (
+            "⚠️ 未检测到 API Key。MCP Server 作为独立进程运行，无法直接使用 Agent 的内置 API。\n\n"
+            "请在 Agent 工具的 MCP 配置中添加 env 字段：\n"
+            '  "env": {\n'
+            '    "ANTHROPIC_API_KEY": "sk-xxx",\n'
+            '    "ANTHROPIC_BASE_URL": "http://your-proxy:8080/v1"  // 可选\n'
+            '  }\n\n'
+            "或设置系统环境变量 ANTHROPIC_API_KEY。\n"
+            "无需 API 的查询工具（get_book_progress、read_chapter_content、install_skill）仍可正常使用。"
+        )
+    return None
 
 
 def _resolve_book_path(book_path: str) -> str:
@@ -127,6 +148,9 @@ async def run_pipeline(
         处理结果摘要
     """
     _ensure_api()
+    api_err = _require_api()
+    if api_err:
+        return api_err
     book_path = _resolve_book_path(book_path)
 
     seqs_list = None
@@ -175,7 +199,9 @@ async def summarize_chapter(book_path: str, seq: int) -> str:
     Returns:
         总结结果
     """
-    _ensure_api()
+    api_err = _require_api()
+    if api_err:
+        return api_err
     book_path = _resolve_book_path(book_path)
 
     try:
@@ -205,7 +231,7 @@ async def teach_chapter(book_path: str, seq: int) -> str:
     Returns:
         教案内容（前 2000 字）或生成状态
     """
-    _ensure_api()
+    # 先检查是否已有教案（不需要 API）
     book_path = _resolve_book_path(book_path)
 
     # 先检查是否已有教案
@@ -249,7 +275,9 @@ async def extract_keypoints(book_path: str, seq: int = 0) -> str:
     Returns:
         知识点内容或状态
     """
-    _ensure_api()
+    api_err = _require_api()
+    if api_err:
+        return api_err
     book_path = _resolve_book_path(book_path)
 
     book_dir = os.path.dirname(book_path)
@@ -294,7 +322,9 @@ async def generate_article(book_path: str) -> str:
     Returns:
         生成结果
     """
-    _ensure_api()
+    api_err = _require_api()
+    if api_err:
+        return api_err
     book_path = _resolve_book_path(book_path)
 
     book_dir = os.path.dirname(book_path)

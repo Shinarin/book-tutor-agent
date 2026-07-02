@@ -21,16 +21,15 @@ mcp = FastMCP("book-tutor")
 # ---------------------------------------------------------------------------
 
 def _ensure_api():
-    """确保 API 环境变量已设置。MCP 子进程自动继承宿主环境变量，通常无需手动配置。
-    仅当 Agent 工具没有自动传递 API 时需在 MCP 配置的 env 字段中设置。"""
+    """确保 API 环境变量已设置。同时兼容 Anthropic 和 OpenAI 协议。"""
     api_key = (os.environ.get("ANTHROPIC_API_KEY")
                or os.environ.get("ANTHROPIC_AUTH_TOKEN")
-               or os.environ.get("OPENAI_API_KEY"))  # Codex 模式也兼容
+               or os.environ.get("OPENAI_API_KEY"))
     if api_key:
         os.environ.setdefault("ANTHROPIC_API_KEY", api_key)
         os.environ.setdefault("ANTHROPIC_AUTH_TOKEN", api_key)
+        os.environ.setdefault("OPENAI_API_KEY", api_key)
         return True
-
     return False
 
 
@@ -38,14 +37,17 @@ def _require_api():
     """要求 API，未配置时返回友好提示。"""
     if not _ensure_api():
         return (
-            "⚠️ 未检测到 API Key。MCP Server 作为独立进程运行，无法直接使用 Agent 的内置 API。\n\n"
-            "请在 Agent 工具的 MCP 配置中添加 env 字段：\n"
-            '  "env": {\n'
-            '    "ANTHROPIC_API_KEY": "sk-xxx",\n'
+            "⚠️ 未检测到 API Key。\n\n"
+            "在 MCP 配置的 env 字段中设置（支持 Anthropic 或 OpenAI 协议）：\n"
+            "  Anthropic:\n"
+            '    "ANTHROPIC_API_KEY": "sk-ant-xxx"\n'
             '    "ANTHROPIC_BASE_URL": "http://your-proxy:8080/v1"  // 可选\n'
-            '  }\n\n'
-            "或设置系统环境变量 ANTHROPIC_API_KEY。\n"
-            "无需 API 的查询工具（get_book_progress、read_chapter_content、install_skill）仍可正常使用。"
+            "  OpenAI / 兼容:\n"
+            '    "OPENAI_API_KEY": "sk-xxx"\n'
+            '    "OPENAI_BASE_URL": "http://your-proxy:8080/v1"  // 可选\n'
+            '    "BOOK_TUTOR_AGENT_PROVIDER": "codex"\n'
+            "\n"
+            "无需 API 的查询工具（get_book_progress、read_chapter_content、install_skill）始终可用。"
         )
     return None
 
